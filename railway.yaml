@@ -1,0 +1,5 @@
+name: arjan-challenge
+deployment-envs:
+  production:
+    BUILD_COMMAND: pip install -r requirements.txt
+    RUN_COMMAND: python main.py
