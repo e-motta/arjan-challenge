@@ -35,5 +35,5 @@ async def get_data():
 async def get_population_detail(country_code: str):
     json = await _http_post(BASE_URL, {"iso3": country_code})
     if json["error"]:
-        json["data"]["iso3"] = country_code
+        json["data"] = {"iso3": country_code}
     return json

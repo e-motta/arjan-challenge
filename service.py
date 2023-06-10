@@ -72,7 +72,9 @@ def get_populations_as_df(country_ids: list[int]):
     return pd.DataFrame(populations_dict)
 
 
-def join_population_and_countries_df(
+def join_population_and_countries_for_plotting_df(
     countries_df: pd.DataFrame, populations_df: pd.DataFrame
 ):
-    return pd.merge(countries_df, populations_df, left_on="id", right_on="country_id")
+    df = pd.merge(countries_df, populations_df, left_on="id", right_on="country_id")
+    df["Country"] = df["name"]
+    return df
