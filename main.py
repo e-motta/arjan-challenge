@@ -53,7 +53,7 @@ def main() -> None:
         loop.close()
         return result
 
-    app.run(debug=True)
+    app.run(host="0.0.0.0")
 
 
 if __name__ == "__main__":
