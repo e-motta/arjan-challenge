@@ -29,10 +29,9 @@ class Model:
         placeholders = ", ".join(["?"] * len(vars(self).keys()))
 
         with db_manager("database.db") as cursor:
-            # TODO: add condition: insert only swhen not exists
             cursor.execute(
                 f"""--sql
-                INSERT INTO {self.table_name} ({fields}) VALUES ({placeholders});
+                INSERT OR IGNORE INTO {self.table_name} ({fields}) VALUES ({placeholders});
                 """,
                 (values),
             )

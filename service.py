@@ -1,6 +1,7 @@
 import asyncio
 import pandas as pd
 from typing import Any
+import json
 
 from api import get_population_detail
 from models import (
@@ -78,3 +79,13 @@ def join_population_and_countries_for_plotting_df(
     df = pd.merge(countries_df, populations_df, left_on="id", right_on="country_id")
     df["Country"] = df["name"]
     return df
+
+
+def get_countries_rel():
+    with open("countries_iso3.json", "r") as file:
+        countries = json.load(file)
+        countries_rel = [
+            {"label": country["name"], "value": country["code"]}
+            for country in countries
+        ]
+    return countries_rel
