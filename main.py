@@ -2,6 +2,7 @@ import asyncio
 import plotly.express as px
 from dash import Dash, dcc, html, Input, Output
 import pandas as pd
+from typing import List
 
 from service import (
     get_countries,
@@ -28,7 +29,7 @@ def main() -> None:
         ]
     )
 
-    async def update_graph(countries_list: list[str]):
+    async def update_graph(countries_list: List[str]):
         if len(countries_list) > 0:
             countries = await get_countries(countries_list)
             countries_df = await get_countries_as_df(countries_list)
@@ -46,7 +47,7 @@ def main() -> None:
         return fig
 
     @app.callback(Output("graph", "figure"), Input("dropdown", "value"))
-    def initiate_async_update(countries_list: list[str]):
+    def initiate_async_update(countries_list: List[str]):
         loop = asyncio.new_event_loop()
         result = loop.run_until_complete(update_graph(countries_list))
         loop.close()

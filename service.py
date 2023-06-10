@@ -1,6 +1,6 @@
 import asyncio
 import pandas as pd
-from typing import Any
+from typing import Any, Dict, List
 import json
 
 from api import get_population_detail
@@ -12,9 +12,9 @@ from models import (
 )
 
 
-async def parse_api_data(json: dict[Any, Any]):
+async def parse_api_data(json: Dict[Any, Any]):
     data = json["data"]
-    errors: list[str] = []
+    errors: List[str] = []
 
     if json["error"]:
         errors.append(data["iso3"])
@@ -22,7 +22,7 @@ async def parse_api_data(json: dict[Any, Any]):
     country = Country(data["country"], data["iso3"])
     country.save()
 
-    populations: list[Population] = []
+    populations: List[Population] = []
     for count in data["populationCounts"]:
         population = Population(count["year"], count["value"])
         population.country_id = country.id
@@ -32,14 +32,14 @@ async def parse_api_data(json: dict[Any, Any]):
     return {"country": country, "populations": populations, "errors": errors}
 
 
-async def get_countries(country_codes: list[str]):
+async def get_countries(country_codes: List[str]):
     db_countries, db_not_found = query_countries_by_codes(country_codes)
 
     api_data = await asyncio.gather(
         *[get_population_detail(code) for code in db_not_found]
     )
 
-    api_countries: list[Country] = []
+    api_countries: List[Country] = []
     for country in api_data:
         data = await parse_api_data(country)
         country_data = data["country"]
@@ -48,7 +48,7 @@ async def get_countries(country_codes: list[str]):
     return db_countries + api_countries
 
 
-async def get_countries_as_df(country_codes: list[str]):
+async def get_countries_as_df(country_codes: List[str]):
     countries_list = await get_countries(country_codes)
     countries_dict = {
         "id": [country.id for country in countries_list],
@@ -58,11 +58,11 @@ async def get_countries_as_df(country_codes: list[str]):
     return pd.DataFrame(countries_dict)
 
 
-def get_populations(country_ids: list[int]):
+def get_populations(country_ids: List[int]):
     return query_populations_by_country_ids(country_ids)
 
 
-def get_populations_as_df(country_ids: list[int]):
+def get_populations_as_df(country_ids: List[int]):
     populations_list = get_populations(country_ids)
     populations_dict = {
         "id": [pop.id for pop in populations_list],

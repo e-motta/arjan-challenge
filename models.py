@@ -1,6 +1,6 @@
 import sqlite3
 from contextlib import contextmanager
-from typing import Any
+from typing import Any, List, Tuple
 from dataclasses import dataclass, field
 
 
@@ -53,8 +53,6 @@ class Country(Model):
     name: str
     iso3: str
 
-    # populations: list[Population] = field(repr=False, init=False)
-
     table_name = "countries"
 
 
@@ -99,8 +97,8 @@ def query_country_by_code(country_code: str):
 
 
 def query_countries_by_codes(
-    country_codes: list[str],
-) -> tuple[list[Country], list[str]]:
+    country_codes: List[str],
+) -> Tuple[List[Country], List[str]]:
     country_codes = [code.upper() for code in country_codes]
 
     with db_manager("database.db") as cursor:
@@ -115,7 +113,7 @@ def query_countries_by_codes(
 
         data = query.fetchall()
 
-        countries: list[Country] = []
+        countries: List[Country] = []
 
         for row in data:
             country = Country(*row[1:])
@@ -131,7 +129,7 @@ def query_countries_by_codes(
         return countries, not_found
 
 
-def query_populations_by_country_ids(country_ids: list[int]) -> list[Population]:
+def query_populations_by_country_ids(country_ids: List[int]) -> List[Population]:
     with db_manager("database.db") as cursor:
         placeholders = ", ".join(["?"] * len(country_ids))
 
@@ -143,7 +141,7 @@ def query_populations_by_country_ids(country_ids: list[int]) -> list[Population]
         )
 
         data = query.fetchall()
-        populations: list[Population] = []
+        populations: List[Population] = []
 
         for row in data:
             population = Population(*row[2:])
