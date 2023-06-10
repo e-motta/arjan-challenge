@@ -36,7 +36,7 @@ class Model:
                 """,
                 (values),
             )
-            self.id = cursor.lastrowid
+            self.id = cursor.lastrowid  # type: ignore
 
 
 @dataclass
@@ -99,7 +99,9 @@ def query_country_by_code(country_code: str):
             return country
 
 
-def query_countries_by_codes(country_codes: list[str]):
+def query_countries_by_codes(
+    country_codes: list[str],
+) -> tuple[list[Country], list[str]]:
     country_codes = [code.upper() for code in country_codes]
 
     with db_manager("database.db") as cursor:
@@ -114,7 +116,7 @@ def query_countries_by_codes(country_codes: list[str]):
 
         data = query.fetchall()
 
-        countries = []
+        countries: list[Country] = []
 
         for row in data:
             country = Country(*row[1:])
@@ -130,7 +132,7 @@ def query_countries_by_codes(country_codes: list[str]):
         return countries, not_found
 
 
-def query_populations_by_country_ids(country_ids: list[int]):
+def query_populations_by_country_ids(country_ids: list[int]) -> list[Population]:
     with db_manager("database.db") as cursor:
         placeholders = ", ".join(["?"] * len(country_ids))
 
@@ -142,7 +144,7 @@ def query_populations_by_country_ids(country_ids: list[int]):
         )
 
         data = query.fetchall()
-        populations = []
+        populations: list[Population] = []
 
         for row in data:
             population = Population(*row[2:])

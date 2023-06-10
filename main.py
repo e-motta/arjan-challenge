@@ -1,51 +1,28 @@
-import pandas as pd
 import asyncio
 
-import api
-import models
-import service
-from json_mock import json
+# import plotly.express as px
+
+from service import (
+    get_countries,
+    get_countries_as_df,
+    get_populations_as_df,
+    join_population_and_countries_df,
+)
 
 
-# def main() -> None:
-#     # response = api.get_population_detail("BRA")
-#     # json = response.json()
-#     data = json["data"]
-#     # keys = [key for key in data.keys()]
-#     # print(keys)
-#     df = pd.DataFrame(data)
-#     print(df.head)
-#     print(df.columns)
-#     print(df.files.iloc[0])
+async def main() -> None:
+    COUNTRIES_LIST = ["FRA", "BRA"]
 
+    countries = await get_countries(COUNTRIES_LIST)
+    countries_df = await get_countries_as_df(COUNTRIES_LIST)
+    populations_df = get_populations_as_df([c.id for c in countries])
 
-async def main_two() -> None:
-    countries = ["BRA", "USA", "RUS", "CAN", "AUS", "POL"]
-    data = await asyncio.gather(
-        *[api.get_population_detail(country) for country in countries]
-    )
-    print(data)
+    # plot_df = join_population_and_countries_df(countries_df, populations_df)
 
-
-async def main_three() -> None:
-    pop = await service.get_country_population("POL")
-    print(pop)
-
-
-def main_four() -> None:
-    p = models.query_countries_by_codes(["BRA", "POL", "FRA"])
-    print(p)
-
-
-async def main_five() -> None:
-    c = await service.get_countries(["BRA", "POL", "USA"])
-    c_df = await service.get_countries_as_df(["BRA", "POL", "USA"])
-    p = service.get_populations_as_df([country.id for country in c])
-    print(c, c_df, p)
+    # fig = px.line(plot_df, x="year", y="population", color="name")
+    # fig.update_layout(xaxis_title="Year", yaxis_title="Population")
+    # fig.show()
 
 
 if __name__ == "__main__":
-    # asyncio.run(main_two())
-    # main()
-    # asyncio.run(main_three())
-    asyncio.run(main_five())
+    asyncio.run(main())
