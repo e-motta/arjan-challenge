@@ -12,6 +12,8 @@ from service import (
     get_countries_rel,
 )
 
+server = None
+
 
 def main() -> None:
     app = Dash(__name__)
