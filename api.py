@@ -28,10 +28,6 @@ async def get_data():
     return await _http_get(BASE_URL)
 
 
-# async def get_population():
-#     return await _http_get(f"{BASE_URL}/pop")
-
-
 async def get_population_detail(country_code: str):
     json = await _http_post(BASE_URL, {"iso3": country_code})
     if json["error"]:
